@@ -5,13 +5,6 @@ import sys
 
 import cloudpickle
 import tensorflow as tf
-import os
-from garage.torch import set_gpu_mode
-
-set_gpu_mode(True)
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 
 from garage import rollout
 
@@ -58,11 +51,9 @@ if __name__ == '__main__':
     parser.add_argument('file', type=str, help='path to the snapshot file')
     parser.add_argument('--max_episode_length',
                         type=int,
-                        default=5000,
+                        default=1000,
                         help='Max length of episode')
     args = parser.parse_args()
-
-
 
     # If the snapshot file use tensorflow, do:
     # import tensorflow as tf
@@ -78,18 +69,5 @@ if __name__ == '__main__':
                                policy,
                                max_episode_length=args.max_episode_length,
                                animated=True)
-
-# import tensorflow as tf
-# from garage.experiment import Snapshotter
-# from garage import rollout
-#
-# param_dir = "/home/bara/PycharmProjects/Garage/data/local/experiment/garage_sac_panda_position_16"
-# snapshotter = Snapshotter()
-#
-# with tf.compat.v1.Session() as sess:
-#     # print("extrating parameters from file %s ..." % param_dir)
-#     data = snapshotter.load(param_dir)
-#
-# policy = data['algo'].policy
-# env = data['env']
-# path = rollout(env, policy, animated=True)
+                if not query_yes_no('Continue simulation?'):
+                    break

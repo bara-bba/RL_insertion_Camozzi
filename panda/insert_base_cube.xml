@@ -1,0 +1,121 @@
+<mujoco>
+
+    <compiler angle="radian"/>
+
+    <option cone="elliptic" timestep="0.002">
+        <flag gravity="enable" override="disable" refsafe="enable"/>
+    </option>
+
+    <asset>
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512"/>
+        <material name="MatGnd" reflectance="0.5" texture="texplane" texrepeat="1 1" texuniform="true"/>
+
+        <!-- BASE -->
+        <mesh name="mesh_00" file="stl/mesh/00.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_01" file="stl/mesh/01.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_02" file="stl/mesh/02.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_03" file="stl/mesh/03.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_04" file="stl/mesh/04.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_05" file="stl/mesh/05.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_06" file="stl/mesh/06.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_07" file="stl/mesh/07.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_08" file="stl/mesh/08.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_09" file="stl/mesh/09.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_10" file="stl/mesh/10.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_11" file="stl/mesh/11.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_12" file="stl/mesh/12.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_13" file="stl/mesh/13.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_14" file="stl/mesh/14.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_15" file="stl/mesh/15.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_16" file="stl/mesh/16.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_17" file="stl/mesh/17.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_18" file="stl/mesh/18.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_19" file="stl/mesh/19.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_20" file="stl/mesh/20.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_21" file="stl/mesh/21.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_22" file="stl/mesh/22.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_23" file="stl/mesh/23.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_24" file="stl/mesh/24.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_25" file="stl/mesh/25.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="mesh_26" file="stl/mesh/26.stl" scale="0.001 0.001 0.001"/>
+
+        <!-- INSERT -->
+        <mesh name="insert" file="stl/insert.stl" scale='0.00093 0.00093 0.001'/>
+
+    </asset>
+
+    <visual>
+		<scale framewidth="0.05" framelength="0.08" jointwidth="0.05" jointlength="0.08" actuatorwidth="0.05" actuatorlength="0.08" forcewidth="0.01" contactwidth="0.01"/>
+	</visual>
+
+    <default>
+        <default class="insert">
+                <default class="visual">
+                <geom type="mesh" rgba=".95 .99 .92 1" mass="0"/>
+                </default>
+
+            <default class="collision">
+                <geom type="mesh" rgba=".5 .6 .7 1"/>
+            </default>
+        </default>
+    </default>
+
+    <worldbody>
+        <light pos="0 0 1000" castshadow="true"/>
+
+        <!-- FLOOR -->
+        <geom name="ground" pos="0 0 0" size="5 5 10" material="MatGnd" type="plane" contype="4" conaffinity="1"/>-->
+
+        <!-- TABLE -->
+        <geom name="wrk_table" pos="0 0 0.225" type="box" mass="90" size=".1 .1 .225" rgba="0.9 0.9 0.9 1" contype="4" conaffinity="1"/>
+
+
+        <!--  BASE  -->
+		<body name="base" pos="0 0 .45">
+            <!--geom name="limit" pos="0 0 0.01" size="0.1 0.1 10" type="plane" contype="4" conaffinity="1"/-->
+            <site name="base_site" size="0.002" pos="0 0 0.0094" rgba="0.9529411765 0.8 0.03529411765 0.5"/>
+
+
+ 		</body>
+
+        <!-- EE -->
+        <body name="insert" pos="0 0 0.68" euler="3.14159265359 0 0">
+
+            <site name="ee_site" pos="0 0 0" size="0.01, 0.01, 0.01" euler="0 0 -1.57"/>
+
+            <joint name="insert_x" pos="0 0 0" type="slide" axis="1 0 0" damping="100" range="-0.01 0.01"/>
+            <joint name="insert_y" pos="0 0 0" type="slide" axis="0 1 0" damping="100" range="-0.01 0.01"/>
+            <joint name="insert_z" pos="0 0 0" type="slide" axis="0 0 1" damping="100" range="-0.01 0.01"/>
+
+            <joint name="insert_ball_1" pos="0 0 0" type="hinge" axis="1 0 0" damping="1.5" range="-0.1 0.1"/>
+            <joint name="insert_ball_2" pos="0 0 0" type="hinge" axis="0 1 0" damping="1.5" range="-0.1 0.1"/>
+            <joint name="insert_ball_3" pos="0 0 0" type="hinge" axis="0 0 1" damping="1.5" range="-0.1 0.1"/>
+
+            <!-- COMPONENT -->
+            <body name="piston" pos="0 0 0.147">
+                <geom pos="0 0 0" euler="0 0 0" class="visual" mesh="insert" conaffinity="4" contype="4" mass="0.3"/>
+                <site name="insert_site" size="0.002" pos="0 0 0.035" rgba="0.9529411765 0.8 0.03529411765 1"/>
+            </body>
+
+        </body>
+
+    </worldbody>
+
+    <actuator>
+
+        <position name="position_x" joint="insert_x" gear="10" kp="100" forcerange="-30 30" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="position_y" joint="insert_y" gear="10" kp="100" forcerange="-30 30" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="position_z" joint="insert_z" gear="10" kp="1000" forcerange="-30 30" ctrllimited="true" ctrlrange="-1 1"/>
+
+        <position name="ball_1" joint="insert_ball_1" gear="1" kp="100" forcerange="-100 100" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="ball_2" joint="insert_ball_2" gear="1" kp="100" forcerange="-100 100" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="ball_3" joint="insert_ball_3" gear="1" kp="100" forcerange="-100 100" ctrllimited="true" ctrlrange="-1 1"/>
+
+    </actuator>
+
+    <sensor>
+        <force name="ee_force" site="ee_site"/>
+        <torque name="ee_torque" site="ee_site"/>
+    </sensor>
+
+</mujoco>

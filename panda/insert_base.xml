@@ -1,14 +1,18 @@
 <mujoco>
 
-    <compiler angle="radian"/>
+    <compiler angle="radian" inertiafromgeom="true"/>
 
-    <option cone="elliptic">
-        <flag gravity="disable"/>
+    <option cone="elliptic" timestep="0.0001">
+        <flag gravity="enable" override="disable" refsafe="disable"/>
     </option>
 
+    <default>
+        <joint armature="0.004" damping="1" limited="true"/>
+        <geom friction=".8 .1 .01" density="300" margin="0.002" condim="1" contype="0" conaffinity="0"/>
+    </default>
+
     <asset>
-        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2"
-                width="512" height="512"/>
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512"/>
         <material name="MatGnd" reflectance="0.5" texture="texplane" texrepeat="1 1" texuniform="true"/>
 
         <!-- BASE -->
@@ -41,75 +45,67 @@
         <mesh name="mesh_26" file="stl/mesh/26.stl" scale="0.001 0.001 0.001"/>
 
         <!-- INSERT -->
-        <mesh name="insert" file="stl/insert.stl" scale='0.00093 0.00093 0.001'/>
+        <mesh name="insert" file="stl/insert.stl" scale='0.00092 0.00092 0.001'/>
 
     </asset>
 
     <visual>
-		<scale framewidth="0.05" framelength="0.8" jointwidth="0.05" jointlength="0.8" actuatorwidth="0.05" actuatorlength="0.8" forcewidth="0.1" contactwidth="0.1"/>
+		<scale framewidth="0.05" framelength="0.08" jointwidth="0.05" jointlength="0.08" actuatorwidth="0.05" actuatorlength="0.08" forcewidth="0.01" contactwidth="0.01"/>
 	</visual>
 
     <default>
-        <geom condim="4"/>
         <default class="insert">
-            <joint pos="0 0 0" limited="true" damping="100"/>
-                <position forcelimited="true" ctrllimited="true" user="1002 40 2001 -0.005 0.005"/>
                 <default class="visual">
-                <geom contype="0" conaffinity="0" group="0" type="mesh" rgba=".95 .99 .92 1" mass="0"/>
-            </default>
+                <geom type="mesh" rgba=".95 .99 .92 1" mass="0"/>
+                </default>
 
             <default class="collision">
-                <geom contype="1" conaffinity="1" group="3" type="mesh" rgba=".5 .6 .7 1"/>
-            </default>
-
-            <default class="insert_finger">
-                <joint damping="0" armature='5'/>
+                <geom type="mesh" rgba=".5 .6 .7 1"/>
             </default>
         </default>
     </default>
 
     <worldbody>
-        <light pos="0 0 1000" castshadow="false"/>
+        <light pos="0 0 1000" castshadow="true"/>
 
         <!-- FLOOR -->
-        <geom name="ground" pos="0 0 0" size="5 5 10" material="MatGnd" type="plane" contype="1" conaffinity="1"/>
+        <geom name="ground" pos="0 0 0" size="5 5 10" material="MatGnd" type="plane" contype="4" conaffinity="1"/>
 
         <!-- TABLE -->
-        <!--geom name="wrk_table" pos="0 0 0.2" type="box" mass="90" size=".2 .2 .2" rgba="0.9 0.9 0.9 1" contype="1" conaffinity="1"/-->
+        <geom name="wrk_table" pos="0 0 0.225" type="box" mass="90" size=".1 .1 .225" rgba="0.9 0.9 0.9 1" contype="4" conaffinity="1"/>
 
 
         <!--  BASE  -->
 		<body name="base" pos="0 0 .45">
-			<!--geom type="cylider" size="0.02 0.05" rgba=".9 0 0 .5" contype="8" conaffinity="8"/-->
             <site name="base_site" size="0.002" pos="0 0 0.0094" rgba="0.9529411765 0.8 0.03529411765 0.5"/>
 
-            <geom pos="0 0 0" class="visual" mesh="mesh_00" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_01" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_02" condim="1" contype="1" mass="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_03" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_04" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_05" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_06" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_07" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_08" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_09" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_10" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_11" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_12" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_13" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_14" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_15" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_16" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_17" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_18" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_19" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_20" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_21" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_22" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_23" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_24" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_25" condim="1" contype="1"/>
-            <geom pos="0 0 0" class="visual" mesh="mesh_26" condim="1" contype="1"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_00" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_01" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_02" condim="4" contype="4" conaffinity="4" mass="1"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_03" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_04" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_05" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_06" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_07" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_08" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_09" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_10" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_11" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_12" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_13" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_14" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_15" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_16" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_17" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_18" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_19" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_20" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_21" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_22" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_23" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_24" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_25" condim="4" contype="4" conaffinity="4"/>
+            <geom pos="0 0 0" class="visual" mesh="mesh_26" condim="4" contype="4" conaffinity="4"/>
 
  		</body>
 
@@ -118,20 +114,19 @@
 
             <site name="ee_site" pos="0 0 0" size="0.01, 0.01, 0.01" euler="0 0 -1.57"/>
 
-            <joint name="insert_x" pos="0 0 0" type="slide" axis="1 0 0" frictionloss="0" damping="100" range="-1 1"/>
-            <joint name="insert_y" pos="0 0 0" type="slide" axis="0 1 0" frictionloss="0" damping="100" range="-1 1"/>
-            <joint name="insert_z" pos="0 0 0" type="slide" axis="0 0 1" frictionloss="0" damping="100" range="-1 1"/>
+            <joint name="insert_x" pos="0 0 0" type="slide" axis="1 0 0" damping="1500" range="-1 1"/>
+            <joint name="insert_y" pos="0 0 0" type="slide" axis="0 1 0" damping="1000" range="-1 1"/>
+            <joint name="insert_z" pos="0 0 0" type="slide" axis="0 0 1" damping="1000" range="-1 1"/>
 
-            <joint name="insert_ball_1" pos="0 0 0" type="hinge" axis="1 0 0" frictionloss="0" damping="100" range="-3 3"/>
-            <joint name="insert_ball_2" pos="0 0 0" type="hinge" axis="0 1 0" frictionloss="0" damping="100" range="-3 3"/>
-            <joint name="insert_ball_3" pos="0 0 0" type="hinge" axis="0 0 1" frictionloss="0" damping="100" range="-3 3"/>
+            <joint name="insert_ball_1" pos="0 0 0" type="hinge" axis="1 0 0" damping="1.5" range="-1 1"/>
+            <joint name="insert_ball_2" pos="0 0 0" type="hinge" axis="0 1 0" damping="1.5" range="-1 1"/>
+            <joint name="insert_ball_3" pos="0 0 0" type="hinge" axis="0 0 1" damping="1.5" range="-1 1"/>
 
             <!-- COMPONENT -->
             <body name="piston" pos="0 0 0.147">
-                <geom pos="0 0 0" euler="0 0 0" class="visual" mesh="insert" conaffinity="1" contype="1" mass="0.3"/>
-                <!--geom type="cylinder" size="0.02 0.05" mass="0.1"/-->
-                <site name="insert_site" size="0.002" pos="0 0 0.035" rgba="0.9529411765 0.8 0.03529411765 1"/>
+                <geom class="visual" mesh="insert" condim="6" conaffinity="4" contype="4" mass="0.3"/>
 
+                <site name="insert_site" size="0.002" pos="0 0 0.035" rgba="0.9529411765 0.8 0.03529411765 1"/>
             </body>
 
         </body>
@@ -140,17 +135,21 @@
 
     <actuator>
 
-        <position name="position_x" joint="insert_x" class="insert_finger" gear="1" kp="10" forcerange="-50 50" ctrllimited="false" ctrlrange="-0.5 0.5"/>
-        <position name="position_y" joint="insert_y" class="insert_finger" gear="1" kp="10" forcerange="-50 50" ctrllimited="false" ctrlrange="-0.5 0.5"/>
-        <position name="position_z" joint="insert_z" class="insert_finger" gear="1" kp="10" forcerange="-50 50" ctrllimited="false" ctrlrange="-0.5 0.5"/>
+<!--        <motor name="position_x" joint="insert_x" gear="100" ctrllimited="true" ctrlrange="-100 100"/>-->
+<!--        <motor name="position_y" joint="insert_y" gear="100" ctrllimited="true" ctrlrange="-100 100"/>-->
+<!--        <motor name="position_z" joint="insert_z" gear="100" ctrllimited="true" ctrlrange="-100 100"/>-->
+<!--        <motor name="ball_1" joint="insert_ball_1" gear="100" ctrllimited="true" ctrlrange="-1 1"/>-->
+<!--        <motor name="ball_2" joint="insert_ball_2" gear="100" ctrllimited="true" ctrlrange="-1 1"/>-->
+<!--        <motor name="ball_3" joint="insert_ball_3" gear="100" ctrllimited="true" ctrlrange="-1 1"/>-->
 
-<!--        <velocity name="velocity_x" joint="insert_x" class="insert_finger" gear="1" kv="100" forcerange="-50 50" ctrllimited="true" ctrlrange="-0.005 0.005"/>-->
-<!--        <velocity name="velocity_y" joint="insert_y" class="insert_finger" gear="1" kv="100" forcerange="-50 50" ctrllimited="true" ctrlrange="-0.005 0.005"/>-->
-<!--        <velocity name="velocity_z" joint="insert_z" class="insert_finger" gear="1" kv="100" forcerange="-50 50" ctrllimited="true" ctrlrange="-0.005 0.005"/>-->
 
-        <position name="ball_1" joint="insert_ball_1" class="insert_finger" kp="10" forcerange="-50 50" ctrllimited="false" ctrlrange="-0.3 0.3"/>
-        <position name="ball_2" joint="insert_ball_2" class="insert_finger" kp="10" forcerange="-50 50" ctrllimited="false" ctrlrange="-0.3 0.3"/>
-        <position name="ball_3" joint="insert_ball_3" class="insert_finger" kp="10" forcerange="-50 50" ctrllimited="false" ctrlrange="-0.3 0.3"/>
+        <position name="position_x" joint="insert_x" gear="10" kp="1500" forcerange="-30 30" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="position_y" joint="insert_y" gear="10" kp="100" forcerange="-30 30" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="position_z" joint="insert_z" gear="10" kp="100" forcerange="-30 30" ctrllimited="true" ctrlrange="-1 1"/>
+
+        <position name="ball_1" joint="insert_ball_1" gear="1" kp="100" forcerange="-100 100" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="ball_2" joint="insert_ball_2" gear="1" kp="100" forcerange="-100 100" ctrllimited="true" ctrlrange="-1 1"/>
+        <position name="ball_3" joint="insert_ball_3" gear="1" kp="100" forcerange="-100 100" ctrllimited="true" ctrlrange="-1 1"/>
 
     </actuator>
 

@@ -12,16 +12,14 @@ from garage import wrap_experiment
 from garage.envs import GymEnv, normalize
 from garage.experiment import deterministic
 from garage.replay_buffer import PathBuffer
-from garage.sampler import RaySampler, VecWorker
-from garage.trainer import TFTrainer
-from garage.torch.algos import SAC
+from garage.sampler import MultiprocessingSampler, RaySampler, VecWorker, WorkerFactory, LocalSampler, DefaultWorker, FragmentWorker
+from garage.trainer import TFTrainer, Trainer
+from garage.torch import set_gpu_mode
+from garage.torch.algos import SAC_OLD
 from garage.torch.policies import TanhGaussianMLPPolicy
 from garage.torch.q_functions import ContinuousMLPQFunction
-from garage.trainer import Trainer
 
-from panda_env import PandaEnv
-
-from torch.multiprocessing import Pool, Process, set_start_method
+from panda_env_rel import PandaEnv
 
 """Snapshotter snapshots training data.
 
@@ -42,6 +40,7 @@ Args:
 
 """
 
+from gym.utils.env_checker import check_env
 
 @wrap_experiment(snapshot_mode='last')
 def garage_sac_panda_position(ctxt=None, seed=1):
@@ -56,38 +55,46 @@ def garage_sac_panda_position(ctxt=None, seed=1):
     """
     deterministic.set_seed(seed)
 
-    with TFTrainer(ctxt) as trainer:
-        env = normalize(GymEnv(PandaEnv(), max_episode_length=3000))
+    trainer = Trainer(snapshot_config=ctxt)
 
-        policy = TanhGaussianMLPPolicy(
-            env_spec=env.spec,
-            hidden_sizes=[256, 256],
-            hidden_nonlinearity=nn.ReLU,
-            output_nonlinearity=None,
-            min_std=np.exp(-20.),
-            max_std=np.exp(2.),
-        )
+    env = normalize(GymEnv(PandaEnv(), max_episode_length=2000), normalize_obs=True, normalize_reward=True)
+    #
+    # env = DMControlEnv.from_suite(PandaEnv, )
 
-        qf1 = ContinuousMLPQFunction(env_spec=env.spec,
-                                     hidden_sizes=[256, 256],
-                                     hidden_nonlinearity=F.relu)
+    # env = GymEnv(PandaEnv(),max_episode_length=1000)
 
-        qf2 = ContinuousMLPQFunction(env_spec=env.spec,
-                                     hidden_sizes=[256, 256],
-                                     hidden_nonlinearity=F.relu)
+    policy = TanhGaussianMLPPolicy(
+        env_spec=env.spec,
+        hidden_sizes=[256, 256],
+        hidden_nonlinearity=nn.ReLU,
+        output_nonlinearity=None,
+        min_std=np.exp(-20.),
+        max_std=np.exp(2.),
+    )
 
-        replay_buffer = PathBuffer(capacity_in_transitions=int(1e6))
+    qf1 = ContinuousMLPQFunction(env_spec=env.spec,
+                                 hidden_sizes=[256, 256],
+                                 hidden_nonlinearity=F.relu)
 
-        sampler = RaySampler(agents=policy,
-                             envs=env,
-                             max_episode_length=env.spec.max_episode_lengtah,
-                             n_workers=2,
-                             is_tf_worker=True,
-                             worker_class=VecWorker,
-                             worker_args=dict(n_envs=6)
-                             )
+    qf2 = ContinuousMLPQFunction(env_spec=env.spec,
+                                 hidden_sizes=[256, 256],
+                                 hidden_nonlinearity=F.relu)
 
-        sac = SAC(env_spec=env.spec,
+    replay_buffer = PathBuffer(capacity_in_transitions=int(1e6))
+
+    # worker_factory = WorkerFactory(max_episode_length=env.spec.max_episode_length,
+    #                                is_tf_worker=True,
+    #                                n_workers=1,
+    #                                worker_class=DefaultWorker
+    #                                )
+
+    sampler = LocalSampler(max_episode_length=env.spec.max_episode_length,
+                           agents=policy,
+                           envs=env,
+                           worker_class=FragmentWorker
+    )
+
+    sac = SAC_OLD(env_spec=env.spec,
                   policy=policy,
                   qf1=qf1,
                   qf2=qf2,
@@ -102,10 +109,14 @@ def garage_sac_panda_position(ctxt=None, seed=1):
                   reward_scale=1.,
                   steps_per_epoch=1)
 
-        sac.to()
-        trainer.setup(algo=sac, env=env)
-        # trainer.train(n_epochs=3000, batch_size=1000, plot=True)
-        trainer.train(n_epochs=3000, batch_size=1000)
+    if torch.cuda.is_available():
+        set_gpu_mode(True)
+    else:
+        set_gpu_mode(False)
+    sac.to()
+    trainer.setup(algo=sac, env=env)
+    # trainer.train(n_epochs=3000, batch_size=3000, plot=True)
+    trainer.train(n_epochs=1000, batch_size=1000)
 
 
 s = np.random.randint(0, 1000)
